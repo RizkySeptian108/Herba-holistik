@@ -8,6 +8,7 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\TerapiController;
 use App\Http\Controllers\PenterapiController;
+use App\Http\Controllers\PelayananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +48,14 @@ Route::resource('/dashboard/data-pasien', PasienController::class)->middleware('
 
 // Route Pendaftaran
 Route::resource('/dashboard/pendaftaran', PendaftaranController::class)->middleware('isAdmin');
+
+
+
+
+
+
+
+
+
+// Route Penterapi
+Route::get('/pelayanan', [PelayananController::class, 'index']);
