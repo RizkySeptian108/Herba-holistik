@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 class PelayananController extends Controller
 {
     public function index(){
-        return view('pelayanan.index');
+        return view('pelayanan', [
+            "head" => "Pelayanan"
+        ]);
     }
 }
