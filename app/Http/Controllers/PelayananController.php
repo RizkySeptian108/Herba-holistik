@@ -7,6 +7,6 @@ use Illuminate\Http\Request;
 class PelayananController extends Controller
 {
     public function index(){
-        return "baaa";
+        return view('pelayanan.index');
     }
 }

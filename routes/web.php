@@ -22,7 +22,7 @@ use App\Http\Controllers\PelayananController;
 */
 
 // Route Default
-Route::get('/', [LoginController::class, 'index']);
+Route::get('/', [LoginController::class, 'index'])->middleware('guest');
 
 // Route authentifikasi
 Route::post('/login', [LoginController::class, 'authenticate']);
