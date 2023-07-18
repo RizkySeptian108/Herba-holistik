@@ -22,7 +22,7 @@ use App\Http\Controllers\PelayananController;
 */
 
 // Route Default
-Route::get('/', [LoginController::class, 'index'])->middleware('guest');
+Route::get('/', [LoginController::class, 'index'])->name('/')->middleware('guest');
 
 // Route authentifikasi
 Route::post('/login', [LoginController::class, 'authenticate']);
@@ -58,4 +58,4 @@ Route::resource('/dashboard/pendaftaran', PendaftaranController::class)->middlew
 
 
 // Route Penterapi
-Route::get('/pelayanan', [PelayananController::class, 'index']);
+Route::get('/pelayanan', [PelayananController::class, 'index'])->middleware('auth');
