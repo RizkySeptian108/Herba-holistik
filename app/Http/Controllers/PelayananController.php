@@ -9,10 +9,17 @@ use Illuminate\Support\Carbon;
 class PelayananController extends Controller
 {
     public function index(){
+        if(request('date')){
+            return view('pelayanan', [
+                "head" => "Pelayanan",
+                "pendaftarans" => Pendaftaran::whereDate("created_at", "=", request('date'))->get()
+            ]);
+        }
+
         $currentDate = Carbon::now()->toDateString(); // Get the current date in the database format
         return view('pelayanan', [
             "head" => "Pelayanan",
-            "pendaftaran" => Pendaftaran::where("created_at", "=", $currentDate)->get()
+            "pendaftarans" => Pendaftaran::whereDate("created_at", "=", $currentDate)->get()
         ]);
     }
 }
