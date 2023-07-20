@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('berat_badan');
             $table->text('keluhan');
             $table->enum('status', array('sudah', 'belum'));
+            $table->text('diagnosa')->nullable();
+            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }
