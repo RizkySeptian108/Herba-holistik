@@ -35,6 +35,7 @@ class PasienController extends Controller
      */
     public function store(StorePasienRequest $request)
     {
+
         Pasien::create($request->validated());
         return redirect('/dashboard/data-pasien')->with('success', 'Data pasien berhasil ditambahkan');
     }
@@ -58,7 +59,7 @@ class PasienController extends Controller
         ]);
     }
 
-    /**
+    /** 
      * Update the specified resource in storage.
      */
     public function update(UpdatePasienRequest $request, Pasien $pasien)

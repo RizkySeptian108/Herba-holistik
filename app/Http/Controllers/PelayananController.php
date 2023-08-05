@@ -7,6 +7,7 @@ use App\Models\Pendaftaran;
 use Illuminate\Support\Carbon;
 use App\Models\Pasien;
 use App\Models\Terapi;
+use App\Models\ObatHerbal;
 
 class PelayananController extends Controller
 {
@@ -46,19 +47,46 @@ class PelayananController extends Controller
     public function periksa(Pasien $pasien)
     {
         $pendaftaran = Pendaftaran::where('pasien_id', $pasien->id)->get();
-        $terapis = Terapi::all();
+        $terapis = Terapi::select('id', 'nama_terapi')->get();
+        $obats = ObatHerbal::select('id', 'nama_obat')->get();
         return view('periksa', [
             'head' => 'Periksa',
             'pasien' => $pasien,
             'pendaftarans' => $pendaftaran,
-            'terapis' => $terapis
+            'terapis' => $terapis,
+            'obats' => $obats
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Pendaftaran $pendaftaran)
     {
         $request->validate([
-            'diagnosa' => 'regex:/^[\pL\s\-]+$/u|max:50'
+            'diagnosa' => 'regex:/^[\pL\s\-]+$/u|max:50',
+            'terapi' => 'array', // Pastikan terapi adalah array
+            'terapi.*' => 'numeric', // Pastikan semua elemen dalam terapi adalah angka
+            'obat' => 'array',
+            'obat.*' => 'numeric'
         ]);
+
+        $pendaftaranUpdate = [
+            'diagnosa' => $request->diagnosa,
+            'user_id' => auth()->user()->id
+        ];
+
+        if($request->terapi){
+            foreach($request->terapi as $terapi){
+                $pendaftaran->terapi()->attach($terapi);
+            }
+        }
+
+        if($request->obat){
+            foreach($request->obat as $obat){
+                $pendaftaran->obat()->attach($obat);
+            }
+        }
+
+        Pendaftaran::where('id', $pendaftaran->id)->update($pendaftaranUpdate);
+
+        return redirect('/pelayanan/periksa/'. $pendaftaran->pasien_id)->with('success', 'Data yang baru berhasil ditambahkan');
     }
 }

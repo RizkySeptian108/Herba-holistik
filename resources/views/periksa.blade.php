@@ -3,6 +3,7 @@
 @include('layout.navbar')
 
 @section('container')
+
     <div class="container my-2">
         <h1>Halaman Pemeriksaan</h1>
         <div class="row justify-content-center">
@@ -62,10 +63,22 @@
                                 <td scope="row">{{ $loop->iteration }}</td>
                                 <td>{{ $pendaftaran->created_at }}</td>
                                 <td>{{ $pendaftaran->diagnosa }}</td>
-                                <td></td>
-                                <td></td>
-                                <td>{{ $pendaftaran->nama }}</td>
-                                <td><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalInput">Input</button></td>
+                                <td>
+                                    @foreach ($pendaftaran->terapi as $terapi)
+                                        <ul>
+                                            <li>{{ $terapi->nama_terapi }}</li>
+                                        </ul>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach ($pendaftaran->obat as $obat)
+                                        <ul>
+                                            <li>{{ $obat->nama_obat}}</li>
+                                        </ul>
+                                    @endforeach
+                                </td>
+                                <td>{{ $pendaftaran->user->nama }}</td>
+                                <td><button class="btn btn-success" data-bs-toggle="modal" id="buttonModal" data-bs-target="#modalInput" data-id="{{ $pendaftaran->id }}">Input</button></td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -82,7 +95,7 @@
                     <h1 class="modal-title fs-5" id="modalInputLabel">Input Data</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="/pelayanan/store" method="POST">
+                <form action="/pelayanan/store/" method="POST" id="formId">
                     @csrf
                     <input type="hidden" value="{{ auth()->user()->user_id }}" name="user_id">
                     <div class="modal-body">
@@ -95,6 +108,14 @@
                             <select class="form-select" name="terapi[]" id="terapi" multiple>
                                 @foreach ($terapis as $terapi)   
                                     <option value="{{ $terapi->id }}">{{ $terapi->nama_terapi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="obat" class="form-label">Obat Herbal</label>
+                            <select class="form-select" name="obat[]" id="obat" multiple>
+                                @foreach ($obats as $obat)   
+                                    <option value="{{ $obat->id }}">{{ $obat->nama_obat }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -112,5 +133,22 @@
         new MultiSelectTag('terapi', {
             placeholder: 'Tambah Terapi'
         })  // id
+        new MultiSelectTag('obat', {
+            placeholder: 'Tambah Obat Herbal'
+        })  // id
+
+        const buttonModal = document.querySelectorAll('#buttonModal');
+        buttonModal.forEach(element => {
+            element.addEventListener('click', function(){
+                const id = this.dataset.id;
+                const form = document.getElementById('formId');
+                // Get the current action attribute value
+                let currentAction = form.getAttribute('action');
+                // Append the data-id value to the current action value
+                const newAction = `${currentAction}${id}`;
+                // Set the updated action attribute on the form element
+                form.setAttribute('action', newAction);
+            });
+        });
     </script>
 @endsection

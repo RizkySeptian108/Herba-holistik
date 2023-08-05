@@ -60,4 +60,4 @@ Route::resource('/dashboard/pendaftaran', PendaftaranController::class)->middlew
 // Route Penterapi
 Route::get('/pelayanan', [PelayananController::class, 'index'])->middleware('auth');
 Route::get('/pelayanan/periksa/{pasien:id}', [PelayananController::class, 'periksa'])->middleware('auth');
-Route::post('/pelayanan/store', [PelayananController::class, 'store']);
+Route::post('/pelayanan/store/{pendaftaran:id}', [PelayananController::class, 'store']);
