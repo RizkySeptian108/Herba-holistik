@@ -12,34 +12,10 @@ use App\Models\ObatHerbal;
 class PelayananController extends Controller
 {
     public function index(){
-
-        $old = ['date' => '', 'keyword' => ''];  //this is to repopulate the input
-        if(request('date')){
-            // with filtering date
-            $old['date'] = request('date');
-            $data = Pendaftaran::whereDate("created_at", "=", request('date'))->get();
-        }else{
-            // if there is no filter
-            $currentDate = Carbon::now()->toDateString(); // Get the current date in the database format
-            $data = Pendaftaran::whereDate("created_at", "=", $currentDate)->get();
-        }
-
-        if (request('keyword')) {
-            // if want to filter a name
-            $old['keyword'] = request('keyword');
-
-            $keyword = strtolower(request('keyword')); //change keyword to lower case
-
-            //filter the keyword
-            $data = $data->filter(function ($item) use ($keyword) {
-                $nama_pasien = strtolower($item->pasien()->value('nama_pasien'));
-                return strpos($nama_pasien, $keyword) !== false;
-            });
-        }
-
+        $currentDate = Carbon::now()->toDateString(); // Get the current date 
+        $data = Pendaftaran::whereDate("created_at", "=", $currentDate)->get();
         return view('pelayanan', [
             "head" => "Pelayanan",
-            "old" => $old,
             "pendaftarans" => $data
         ]);
     }
@@ -128,5 +104,11 @@ class PelayananController extends Controller
     {
         Pendaftaran::where('id', $pendaftaran->id)->update(['status_pembayaran' => true]);
         return redirect('/pelayanan')->with('success', 'Pelayanan selesai');
+    }
+
+    public function search(Request $request)
+    {
+        $data = Pendaftaran::whereDate('created_at', '=', $request->date_time)->get();
+        return json_encode($data->load('pasien:id,nama_pasien'));
     }
 }

@@ -8,12 +8,10 @@
         <div class="row ">
             <form action="/pelayanan" class="d-flex justify-content-between" method="get">
             <div class="col-sm-3 d-flex">
-                <input type="date" name="date" id="date" class="form-control me-2" value="{{ $old['date'] }}">
-                <button type="submit" class="btn btn-primary">Filter</button>
+                <input type="date" name="date" id="dateKey" class="form-control me-2">
             </div>
             <div class="col-sm-3 d-flex">
-                <input type="text" name="keyword" id="keyword" class="form-control me-2" placeholder="Cari nama" value="{{ $old['keyword'] }}">
-                <button type="submit" class="btn btn-primary">Cari</button>
+                <input type="text" name="keyword" id="keyword" class="form-control me-2" placeholder="Cari nama">
             </div>    
             </form>    
         </div>
@@ -31,7 +29,7 @@
                             <th scope="col">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dataYouSearch">
                         @foreach ($pendaftarans as $pendaftaran)
                             <tr class="">
                                 <td scope="row">{{ $loop->iteration }}</td>
@@ -49,7 +47,48 @@
         </div>
     </div>
     
-    
+    <script>
+        const date = document.getElementById('dateKey');
+        const keyword = document.getElementById('keyword');
+
+        date.addEventListener('change', function(){
+            
+            dateTime = this.value;
+            fetch(`/pelayanan/search?date_time=${dateTime}`)
+                .then(response => {
+                    if(!response.ok){
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const containerForData = document.querySelector('#dataYouSearch');
+
+                    containerForData.innerHTML = '';
+                    if(data.length === 0){
+                        const element = '<tr class=""><td colspan="9999" class="text-center">No result!</td></tr>';
+                        containerForData.innerHTML = element;
+                    }else{
+                        containerForData.innerHTML = data.map(pendaftaran => 
+                            `<tr class="">
+                                    <td scope="row"></td>
+                                    <td>${pendaftaran.pasien.nama_pasien}</td>
+                                    <td>${pendaftaran.berat_badan}</td>
+                                    <td>${pendaftaran.keluhan}</td>
+                                    <td>${pendaftaran.status}</td>
+                                    <td>${pendaftaran.created_at}</td>
+                                    <td><a href="/pelayanan/periksa/${pendaftaran.pasien_id }" class="btn btn-primary">Periksa</a></td>
+                            </tr>`
+                        ).join('');
+                    } 
+
+                    
+                });
+
+
+
+        });
+    </script>
   
 @endsection
 

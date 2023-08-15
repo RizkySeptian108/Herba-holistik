@@ -63,6 +63,10 @@ Route::middleware(['isAdmin'])->group(function () {
 
 // Route Penterapi
 Route::middleware(['auth'])->group(function () { 
+    // searching
+    Route::get('/pelayanan/search', [PelayananController::class, 'search']);
+
+    // pelayanan
     Route::get('/pelayanan', [PelayananController::class, 'index']);
     Route::get('/pelayanan/periksa/{pasien:id}', [PelayananController::class, 'periksa']);
     Route::post('/pelayanan/store/{pendaftaran:id}', [PelayananController::class, 'store']);
