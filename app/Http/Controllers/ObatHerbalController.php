@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ObatHerbal;
+use Illuminate\Auth\Events\Validated;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreObatHerbalRequest;
 use App\Http\Requests\UpdateObatHerbalRequest;
 
@@ -36,8 +38,15 @@ class ObatHerbalController extends Controller
     {
         $validatedData = $request->validate([
             'nama_obat' => 'required|max:50|min:3',
-            'harga' => 'required|numeric'
+            'harga' => 'required|numeric',
+            'gambar' => 'image|mimes:jpeg,jpg,png|max:2048'
+        ], [
+            'gambar.max' => 'Ukuran file gambar tidak boleh lebih dari 2MB.',
         ]);
+
+        if($request->gambar){
+            $validatedData['gambar'] = $request->file('gambar')->store('gambar-obat-herbal');
+        }
 
         ObatHerbal::create($validatedData);
 
@@ -69,6 +78,13 @@ class ObatHerbalController extends Controller
     public function update(UpdateObatHerbalRequest $request, ObatHerbal $obatHerbal)
     {
         $validatedData = $request->validated();
+
+        if($request->gambar){
+            if($request->oldImage){
+                Storage::delete($request->oldImage);
+            }
+            $validatedData['gambar'] = $request->file('gambar')->store('gambar-obat-herbal');
+        }
         ObatHerbal::where('id', $obatHerbal->id)
                         ->update($validatedData);
         return redirect('/dashboard/obat-herbal')->with('success', 'Data berhasil diubah!');

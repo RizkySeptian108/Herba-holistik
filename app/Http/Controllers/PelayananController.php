@@ -46,13 +46,27 @@ class PelayananController extends Controller
 
     public function periksa(Pasien $pasien)
     {
-        $pendaftaran = Pendaftaran::where('pasien_id', $pasien->id)->get();
+
+        $pasien = $pasien->load([
+            'pendaftaran' => function ($query) {
+                $query->select('id','created_at', 'diagnosa', 'status', 'status_pembayaran', 'pasien_id', 'user_id');
+            },
+            'pendaftaran.terapi' => function ($query) {
+                $query->select('id','nama_terapi');
+            },
+            'pendaftaran.obat' => function ($query) {
+                $query->select('id','nama_obat');
+            },
+            'pendaftaran.user' => function ($query){
+                $query->select('id', 'nama');
+            }
+        ]);
+
         $terapis = Terapi::select('id', 'nama_terapi')->get();
         $obats = ObatHerbal::select('id', 'nama_obat')->get();
         return view('periksa', [
             'head' => 'Periksa',
             'pasien' => $pasien,
-            'pendaftarans' => $pendaftaran,
             'terapis' => $terapis,
             'obats' => $obats
         ]);
@@ -88,5 +102,31 @@ class PelayananController extends Controller
         Pendaftaran::where('id', $pendaftaran->id)->update($pendaftaranUpdate);
 
         return redirect('/pelayanan/periksa/'. $pendaftaran->pasien_id)->with('success', 'Data yang baru berhasil ditambahkan');
+    }
+
+    public function pembayaran(Pendaftaran $pendaftaran)
+    {
+        $totalTerapi = 0;
+        $totalObat = 0;
+
+        foreach($pendaftaran->terapi as $terapi){
+            $totalTerapi += $terapi->harga;
+        }
+        foreach($pendaftaran->obat as $obat){
+            $totalObat += $obat->harga;
+        }
+
+        return view('pembayaran', [
+            'head' => 'Pembayaran',
+            'pendaftaran' => $pendaftaran,
+            'totalTerapi' => $totalTerapi,
+            'totalObat' => $totalObat
+        ]);
+    }
+
+    public function selesai(Pendaftaran $pendaftaran)
+    {
+        Pendaftaran::where('id', $pendaftaran->id)->update(['status_pembayaran' => true]);
+        return redirect('/pelayanan')->with('success', 'Pelayanan selesai');
     }
 }

@@ -10,7 +10,7 @@ class Terapi extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_terapi', 'harga'];
+    protected $fillable = ['nama_terapi', 'harga', 'gambar'];
 
     /**
      * The pendaftaran that belong to the Terapi

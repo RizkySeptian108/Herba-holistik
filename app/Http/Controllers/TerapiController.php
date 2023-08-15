@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Terapi;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreTerapiRequest;
 use App\Http\Requests\UpdateTerapiRequest;
 
@@ -36,6 +37,10 @@ class TerapiController extends Controller
     {
         $validatedData = $request->validated();
 
+        if($request->gambar){
+            $validatedData['gambar'] = $request->file('gambar')->store('gambar-terapi');
+        }
+
         Terapi::create($validatedData);
         return redirect('/dashboard/terapi')->with('success', 'Data terapi berhasil di simpan!');
     }
@@ -65,6 +70,14 @@ class TerapiController extends Controller
     public function update(UpdateTerapiRequest $request, Terapi $terapi)
     {
         $validatedData = $request->validated();
+
+        if($request->gambar){
+            if($request->oldImage){
+                Storage::delete($request->oldImage);
+            }
+            $validatedData['gambar'] = $request->file('gambar')->store('gambar-terapi');
+        }
+
         Terapi::where('id', $terapi->id)->update($validatedData);
         return redirect('/dashboard/terapi')->with('success', 'Data terapi berhasi di ubah!');
     }

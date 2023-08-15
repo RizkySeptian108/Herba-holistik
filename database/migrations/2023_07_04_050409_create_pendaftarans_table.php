@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('diagnosa')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->timestamps();
+            $table->boolean('status_pembayaran')->default(false);
         });
     }
 

@@ -26,7 +26,8 @@ class StoreTerapiRequest extends FormRequest
     {
         return [
             'nama_terapi' => 'required|max:50|min:3',
-            'harga' => 'required|numeric'
+            'harga' => 'required|numeric',
+            'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
         ];
     }
 }

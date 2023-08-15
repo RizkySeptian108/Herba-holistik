@@ -58,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($pendaftarans as $pendaftaran)
+                        @foreach ($pasien->pendaftaran as $pendaftaran)
                             <tr class="">
                                 <td scope="row">{{ $loop->iteration }}</td>
                                 <td>{{ $pendaftaran->created_at }}</td>
@@ -78,7 +78,13 @@
                                     @endforeach
                                 </td>
                                 <td>{{ $pendaftaran->user->nama }}</td>
-                                <td><button class="btn btn-success" data-bs-toggle="modal" id="buttonModal" data-bs-target="#modalInput" data-id="{{ $pendaftaran->id }}">Input</button></td>
+                                <td><button class="btn btn-success " data-bs-toggle="modal" id="buttonModal" @if($pendaftaran->status_pembayaran)
+                                    disabled
+                                @endif data-bs-target="#modalInput" data-id="{{ $pendaftaran->id }}">Input</button> <a href="/pelayanan/pembayaran/{{ $pendaftaran->id }}" class="btn btn-success ms-2 @if($pendaftaran->status_pembayaran)
+                                    disabled
+                                @endif" role="button" @if($pendaftaran->status_pembayaran)
+                                aria-disabled="true"
+                            @endif>Bayar</a></td>
                             </tr>
                         @endforeach
                     </tbody>

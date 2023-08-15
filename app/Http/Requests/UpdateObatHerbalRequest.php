@@ -26,7 +26,8 @@ class UpdateObatHerbalRequest extends FormRequest
     {
         return [
             'nama_obat' => 'required|max:50|min:3',
-            'harga' => 'required|numeric'
+            'harga' => 'required|numeric',
+            'gambar' => 'image|mimes:jpeg,jpg,png|max:2048'
         ];
     }
 }
