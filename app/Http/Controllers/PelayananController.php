@@ -108,7 +108,12 @@ class PelayananController extends Controller
 
     public function search(Request $request)
     {
-        $data = Pendaftaran::whereDate('created_at', '=', $request->date_time)->get();
-        return json_encode($data->load('pasien:id,nama_pasien'));
+        if($request->date_time){
+            $data = Pendaftaran::whereDate('created_at', '=', $request->date_time)->get();
+            return json_encode($data->load('pasien:id,nama_pasien'));
+        } else if ($request->keyword){
+            $data = Pendaftaran::where('nama_pasien', 'LIKE', '%' . $request->keyword)->get();
+            return json_encode($data->load('pasien:id,nama_pasien'));
+        }
     }
 }
