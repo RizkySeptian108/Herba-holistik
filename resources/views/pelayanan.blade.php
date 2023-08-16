@@ -55,6 +55,7 @@
         // for live search Date time
         date.addEventListener('change', function(){
             const dateTime = this.value;
+
             fetch(`/pelayanan/search?date_time=${dateTime}`)
                 .then(response => {
                     if(!response.ok){
@@ -83,33 +84,19 @@
                 });
         });
 
-        keyword.addEventListener('change', function(){
-            const keyword = this.value;
-            fetch(`/pelayanan/search?keyword=${keyword}`)
-                .then(response => {
-                    if(!response.ok){
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data =>{
-                    containerForData.innerHTML = '';
-                    if(data.length === 0){
-                        containerForData.innerHTML = '<tr class=""><td colspan="9999" class="text-center">No result!</td></tr>';
-                    }else{
-                        containerForData.innerHTML = data.map((pendaftaran, index) => 
-                            `<tr class="">
-                                    <td scope="row">${index + 1}</td>
-                                    <td>${pendaftaran.pasien.nama_pasien}</td>
-                                    <td>${pendaftaran.berat_badan}</td>
-                                    <td>${pendaftaran.keluhan}</td>
-                                    <td>${pendaftaran.status}</td>
-                                    <td>${pendaftaran.created_at}</td>
-                                    <td><a href="/pelayanan/periksa/${pendaftaran.pasien_id }" class="btn btn-primary">Periksa</a></td>
-                            </tr>`
-                        ).join('');
-                    }
-                });
+        keyword.addEventListener('input', function(){
+            const searchKeyword = this.value.toLowerCase();
+            const allRow = containerForData.querySelectorAll('tr');
+
+            allRow.forEach(row => {
+                const namaPasien = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+                if(namaPasien.includes(searchKeyword)){
+                    row.style.display = ''; 
+                }else{
+                    row.style.display = 'none';
+                }
+            });
         });
     </script>
   

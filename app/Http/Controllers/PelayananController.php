@@ -111,8 +111,9 @@ class PelayananController extends Controller
         if($request->date_time){
             $data = Pendaftaran::whereDate('created_at', '=', $request->date_time)->get();
             return json_encode($data->load('pasien:id,nama_pasien'));
-        } else if ($request->keyword){
-            $data = Pendaftaran::where('nama_pasien', 'LIKE', '%' . $request->keyword)->get();
+        } else if (!$request->data_time){
+            $currentDate = Carbon::now()->toDateString();
+            $data = Pendaftaran::whereDate("created_at", "=", $currentDate)->get();
             return json_encode($data->load('pasien:id,nama_pasien'));
         }
     }
